@@ -1,0 +1,212 @@
+import java.util.Scanner;
+/**
+ * Write a description of class AccountingWork7 here.
+ * software used: BlueJ
+ * written in Java Language
+ * this software is aimed at accountants.
+ * it calculates the deferred tax of the asset.
+ * the software prompts the user to input the:-
+ *  cost of the asset
+ *  cost of the asset as determined by the tax authorities
+ *  usefullife of the asset
+ *  usefullife of the asset as determined by the tax autorities
+ *  the current tax rate
+ * the output is the journal entries related to the deferred tax
+ *
+ * @author uvir eraman
+ * @version (a version number or a date)
+ */
+public class AccountingWork7
+{
+    // instance variables - replace the example below with your own
+    public static void main(String[] args)
+    {
+        //
+        
+        /**
+         * variable "ins" stores the cost price of the asset
+         */
+        Scanner ins = new Scanner(System.in);
+        
+        System.out.print("Fill in the Accountant's cost of the asset: ");
+        
+        int cost = ins.nextInt();
+        
+        /**
+         * variable ina stores the tax-cost of the asset
+         */
+        Scanner ina = new Scanner(System.in);
+        
+        System.out.print("Fill in the Taxman's cost of the asset: ");
+        
+        int taxCost = ina.nextInt();
+        
+        /**
+         * variable "inb" stores the usefullife of the asset
+         */
+        Scanner inb = new Scanner(System.in);
+        
+        System.out.print("Fill in the Accountant's usefullife of the asset: ");
+        
+        int usefulLife = inb.nextInt();
+        
+        /**
+         * variable "inc" sotres the taxmans usefullife of the asset
+         */
+        
+        Scanner inc = new Scanner(System.in);
+        
+        System.out.print("Fill in the taxman's usefullife of the asset: ");
+        
+        int taxUsefulLife = inc.nextInt();
+        
+        /**
+         * variable "ind" stores the tax rate
+         */
+        Scanner ind = new Scanner(System.in);
+        
+        System.out.print("Fill in the tax rate in decimal form (eg.30% will be 0.3): ");
+        
+        double taxRate = ind.nextDouble();
+        
+        
+                       
+        // the accDep variable stores the cummulative amount of depreciation 
+        // it is called up in the cal. of dep for-loop
+        int accDep = 0;
+        
+        // the carryingValue variable stores the remaining value of the asset
+        // it is called up in the cal. of dep for-loop
+        int carryingValue = cost;
+        
+                
+        // the accDep variable stores the cummulative amount of depreciation 
+        // it is called up in the cal. of dep for-loop
+        int taxAccDep = 0;
+        
+        // the carryingValue variable stores the remaining value of the asset
+        // it is called up in the cal. of dep for-loop
+        int taxCarryingValue = taxCost;
+        
+        
+        /**
+         * this is the for-loop that will print out the journal entries for the deferred tax calculation
+         */
+        
+         int longestUsefulLife = 0;
+        
+        
+        if (usefulLife > taxUsefulLife)
+        {
+            //
+            
+            longestUsefulLife = usefulLife;
+        }
+        else
+        {
+            //
+            longestUsefulLife = taxUsefulLife;
+        }
+        
+        
+        //  this calculates the depreciation in a given year
+        int depreciation = 0;
+        
+        int taxDepreciation = 0;
+        
+        for (int years = 0; years < longestUsefulLife; years++)
+        {
+            //
+            if (carryingValue > 0)
+            {
+                    //
+                depreciation = ( cost / usefulLife );
+                
+                // the current year depreciation is added to the accDep variable
+                accDep = accDep + depreciation;
+                
+                // this updates the value of the asset to its current carrying value.
+                carryingValue = cost - accDep;
+                
+                                    
+            }
+            else
+            {
+                //
+                depreciation = 0;
+            }
+            
+            
+            //  if the taxman's carrying value is "0" then there should be no depreciation on the asset.
+            if (taxCarryingValue > 0)
+            {
+                //this calculates the depreciation in a given year
+                taxDepreciation = ( taxCost / taxUsefulLife );
+                
+                // the current year depreciation is added to the accDep variable
+                taxAccDep = taxAccDep + taxDepreciation;
+                
+                // this updates the value of the asset to its current carrying value.
+                taxCarryingValue = taxCost - taxAccDep;
+                
+            }
+            else
+            {
+                //
+                taxDepreciation = 0;
+            }
+            
+                        
+            /**
+             * now we calculate the temporary difference and the defferd tax.
+             * the temporary difference is calculated be subtracting the taxCarryingValue from the carryingValue
+             * the deferred tax is calculated by multiplying the temporary difference with the taxRate.
+             * if the value is positive (meaning > 0) then we 
+             * debit deferred tax and 
+             * credit current tax payable
+             */
+            
+            double tempDiff = (taxDepreciation - depreciation)*-1;
+                        
+            double deferredTax = tempDiff * taxRate;
+           
+            /**
+             * this is the calculation of the temporary difference balance
+             * 
+             */
+            
+            double tempDiffBal = taxCarryingValue - carryingValue;
+            
+            double deferredTaxBal = tempDiffBal * taxRate;
+            
+            int currentYear = years + 1;
+            
+            System.out.println("Current Year: " + currentYear);
+            
+            //System.out.println();
+            
+            if ( deferredTax >0)
+            {
+                //
+                System.out.println("Dr Deferred Tax " + deferredTax);
+                System.out.println("Cr Current Tax Payable " + deferredTax); 
+            }
+            else
+            {
+                //
+                System.out.println("Dr Current Tax Payable " + Math.abs(deferredTax));
+                System.out.println("Cr Deferred Tax " + Math.abs(deferredTax)); 
+            }
+            
+            System.out.println();
+        }
+        
+    }
+
+}
+
+        
+        
+        
+        
+        
