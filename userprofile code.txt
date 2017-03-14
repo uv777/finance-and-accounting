@@ -1,0 +1,249 @@
+package userprofile;
+
+import java.util.Date;
+import java.text.*;
+
+/**
+ * Description of class UserProfile 
+ * 
+ * This is the object that is created when a user creates a user profile.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class UserProfile
+{
+    // instance variables
+    static int serialNumber;
+    
+    private int user_serialNumber;
+    
+    private final String user_fullName;
+    
+    private String user_password;
+    
+    private long user_ID_Number;
+    
+    private String user_email;
+    
+    private String date_created;
+    
+    private int user_age;
+    
+    /**
+     * Constructor for objects of class UserProfile
+     */
+    public UserProfile(String fullName,
+                       String password_user,
+                       String password_confirm,
+                       String ID_Number,
+                       String email,
+                       int age)
+    {
+                           this.user_serialNumber = ++serialNumber;
+                           this.user_fullName = this.testName(fullName);                   
+                           this.user_password = this.passwordTest(password_user, password_confirm);
+                           this.user_ID_Number = this.IDNumberTest(ID_Number);
+                           this.user_email = this.emailTest(email);
+                           this.date_created = this.getCurrentDateAndTime();
+                           this.user_age = this.testAge(age);
+    }
+
+    /**
+     * testname method 
+     * is used to capitalise the 1st letter of each word in a person's name 
+     * This method updates the "capital_fullName" instance variable
+     */
+    public String testName(String fullName)
+    {
+        // put your code here
+        String capital_fullname = " ";
+        
+        // if the user does not provide a user name an Illegal Argument Exception is thrown
+        if(fullName.length()==0)
+                throw new IllegalArgumentException();                  
+        
+        // only letters are allowed in the users name. This if test will highlight if any numbers of symbols are used.
+        //  fullName.replace(" ","")  -  is used to remove the empty space which is not a letter and will affect the remaining code
+        for(int y=0; y<fullName.replace(" ","").length(); y++)
+        {
+            if( ! (Character.isLetter(fullName.replace(" ","").charAt(y))))
+                throw new IllegalArgumentException();
+        }
+        
+        // this for-loop is used to capitalise the user's name and surname
+        for(int x = 0, a =0; x < fullName.length(); x = a)
+        {
+            //variable a stores the index of the " " (space) which is used to seperate a users name
+            a = fullName.indexOf(" ", x+1);
+            if(a == -1){
+                a= fullName.length();
+            }
+            // gets the 1st word in fullName variable
+            String word  = fullName.substring(x,a).trim(); 
+            //makes the 1st letter in the word varibale a capital letter then concatenates the word to the rest of the word variable
+            String capital_word = (word.substring(0,1).toUpperCase())+(word.substring(1)); 
+            //adds the word to the storage variable capital_fullname
+            capital_fullname = (capital_fullname + " " + capital_word).trim();
+        }
+        return capital_fullname;
+    }
+    
+    public String passwordTest(String password_user,String password_confirm)
+    {
+        //Passwords must comprise of the following:-
+        //1. 1 capital letter
+        //2. minimum 9 charaters
+        //3. minimum 1 number
+        
+        boolean password_size_test = false;
+        boolean password_capital_letter_test = false;
+        boolean password_number_test = false;
+                
+        try{
+            // This if-statement is used to test if the password has a minimum length of 9 charaters
+            if(password_user.length() >= 9) password_size_test = true;
+            else throw new IllegalArgumentException("less than 9 charaters");
+        }catch(RuntimeException x)
+        {
+            x.printStackTrace();
+        }
+        
+        // The for-loop is used to test if the password has at least 1 capital letter and at least 1 number
+        for(int x=0; x < password_user.length(); x++)
+            {
+                if (Character.isLetter(password_user.charAt(x)))
+            {                
+                if (Character.isUpperCase(password_user.charAt(x))) password_capital_letter_test = true;
+            }else
+            {
+                if (Character.isDigit(password_user.charAt(x))) password_number_test = true;
+            }
+        }
+         
+        try{
+            //
+            if( ! password_capital_letter_test) throw new IllegalArgumentException(password_user + " has no Capital letters");
+            
+            if( ! password_number_test) throw new IllegalArgumentException(password_user + " has no numbers");
+            
+        }catch(RuntimeException x){
+            x.printStackTrace();
+        }
+        this.confirmPassword(password_user,password_confirm);
+        
+        return password_user;
+    }
+    
+    public void confirmPassword(String password_user, String password_confirm)
+    {
+        // This method is used to test if the users password matches the confirm password entry.
+        for(int x = 0; x < password_user.length(); x++)
+        {
+            try{
+                if( ! (password_user.charAt(x) == password_confirm.charAt(x)))
+                    throw new IllegalArgumentException("Password does not match Confirm password");
+            }catch(RuntimeException y)
+            {
+                y.printStackTrace();
+            }               
+        }
+        
+    }
+    
+    public long IDNumberTest(String ID_Number)
+    {       
+        ID_Number = ID_Number.replace(" ","");
+               
+        try{
+            if(!(ID_Number.length()==13))
+                throw new IllegalArgumentException("ID number lenght is incorrect");
+                
+            for(int x = 0; x < ID_Number.length();x++){
+                char chara = ID_Number.charAt(x);
+                if(! (Character.isDigit(chara)))
+                    throw new IllegalArgumentException("ID number contains a non-number");
+                }
+        }catch(RuntimeException x){
+            x.printStackTrace();
+        }
+        
+        long user_ID_Number = Long.parseLong(ID_Number);
+        
+        return user_ID_Number;
+    }
+    
+    
+        /**
+           * Does the email address have an "@" symbol?
+           * Does the email address have a ".com" or ".co.za" email extention?
+           * if it does then it is will considered a valid email address.
+           */
+        public String emailTest(String email)
+    {
+        
+        boolean valid_email = false;
+        email = email.toLowerCase();
+        int at = email.indexOf("@");
+             
+        // This if-statement tests to see if an "@" symbol exists in the users email address
+        if(at==-1)
+        {
+            throw new IllegalArgumentException();
+        }else{
+            String email_extention = email.substring(email.indexOf(".",at));
+            // This switch statement checks to see if the users email has a valid extention.
+            switch(email_extention)
+            {
+                case ".com" : valid_email = true; break;
+                case ".co.za" : valid_email = true; break;
+                default : throw new IllegalArgumentException("Email extention is not valid");
+                // other email extentions can be added here
+            }
+        }       
+        return email;
+    }
+    
+    /**
+     * This method gets the current date and time when the user creates his account
+     */
+    public String getCurrentDateAndTime()
+    {
+        Date date = new Date();
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat timeNow = new SimpleDateFormat("hh:mm:ss");
+               
+        String currentDate = dateFormat.format(date);
+        String currentTime = timeNow.format(date);
+        
+        return (currentDate + " " + currentTime);
+    }
+    
+    public int testAge(int age)
+    {
+        //
+        if(!(age>0))
+            throw new IllegalArgumentException();
+        else if(age>100)
+            throw new IllegalArgumentException();
+        else return age;
+    }
+    
+    
+    
+    public static void main(String[] args)
+    {
+        //
+        UserProfile x = new UserProfile("john smith","Helloworld123","Helloworld123","890508 1234 08 7","hello@world.com",35);
+        
+        System.out.println("User's full name: " + x.user_fullName);
+        System.out.println("User's password: " +x.user_password);
+        System.out.println("User's serial number: " +x.user_serialNumber);
+        System.out.println("User's ID Number: " +x.user_ID_Number);
+        System.out.println("User's email: " +x.user_email);
+        System.out.println("User created account on: " +x.date_created);
+        System.out.println("User's age: " +x.user_age);
+    }
+    
+}
